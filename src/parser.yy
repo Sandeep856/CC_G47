@@ -27,9 +27,8 @@ int yyerror(std::string msg);
 
 %token TPLUS TDASH TSTAR TSLASH
 %token <lexeme> TINT_LIT TIDENT
-%token INT TLET TDBG
+%token INT TLET TDBG TDEF TUDF
 %token TSCOL TLPAREN TRPAREN TEQUAL
-
 %type <node> Expr Stmt
 %type <stmts> Program StmtList
 
@@ -58,7 +57,7 @@ Stmt : TLET TIDENT TEQUAL Expr
         } else {
             symbol_table.insert($2);
 
-            $$ = new NodeDecl($2, $4);
+            $$ = new NodeAssn($2, $4);
         }
      }
      | TDBG Expr
@@ -66,6 +65,33 @@ Stmt : TLET TIDENT TEQUAL Expr
         $$ = new NodeDebug($2);
      }
      ;
+
+Stmt : TDEF TIDENT Expr
+        {
+            symbol_table.insert($2);
+
+            $$ = new NodeAssn($2, $3);
+        }
+        | TDBG Expr
+        { 
+            $$ = new NodeDebug($2);
+        }
+        ;
+
+Stmt : TUDF TIDENT 
+        {
+            if(symbol_table.contains($2)) {
+                symbol_table.remove($2);
+            
+        } else {
+            yyerror("tried to use undeclared variable.\n");
+        }
+        }
+        | TDBG Expr
+        { 
+            $$ = new NodeDebug($2);
+        }
+        ;
 
 Expr : TINT_LIT               
      { $$ = new NodeInt(stoi($1)); }

@@ -7,3 +7,8 @@ bool SymbolTable::contains(std::string key) {
 void SymbolTable::insert(std::string key) {
     table.insert(key);
 }
+
+void SymbolTable::remove(std::string key)
+{
+    table.erase(key);
+}

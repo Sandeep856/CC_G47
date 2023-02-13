@@ -1,14 +1,19 @@
 %option noyywrap
-
 %{
 #include "parser.hh"
+#include <iostream>
 #include <string>
-
 extern int yyerror(std::string msg);
 %}
-
+%x comment
+%x comment_oneline
 %%
-
+"/*"                    BEGIN(comment);
+<comment>[^*\n]*        /* eat anything that's not a '*' */
+<comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<comment>"*"+"/"        BEGIN(INITIAL);
+"//"                    BEGIN(comment_oneline);
+<comment_oneline>\n     BEGIN(INITIAL);
 "+"       { return TPLUS; }
 "-"       { return TDASH; }
 "*"       { return TSTAR; }
@@ -19,6 +24,8 @@ extern int yyerror(std::string msg);
 "="       { return TEQUAL; }
 "dbg"     { return TDBG; }
 "let"     { return TLET; }
+"#def"     { return TDEF; }
+"#undef"  { return TUDF; }
 [0-9]+    { yylval.lexeme = std::string(yytext); return TINT_LIT; }
 [a-zA-Z]+ { yylval.lexeme = std::string(yytext); return TIDENT; }
 [ \t\n]   { /* skip */ }
