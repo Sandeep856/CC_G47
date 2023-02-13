@@ -12,7 +12,6 @@ struct SymbolTable {
 
     bool contains(std::string key);
     void insert(std::string key);
-    void remove(std::string key);
 };
 
 #endif
