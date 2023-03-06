@@ -12,7 +12,7 @@ Base node class. Defined as `abstract`.
 */
 struct Node {
     enum NodeType {
-        BIN_OP, INT_LIT, STMTS, ASSN, DBG, IDENT, TERN, VARASS
+        BIN_OP, INT_LIT, STMTS, ASSN, DBG, IDENT
     } type;
 
     virtual std::string to_string() = 0;
@@ -30,6 +30,7 @@ struct NodeStmts : public Node {
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
+
 /**
     Node for binary operations
 */
@@ -44,18 +45,7 @@ struct NodeBinOp : public Node {
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
-/*
-Node for ternary Operator
-*/
-struct NodeTernaryOp:public Node
-{
-    Node * condition;
-    Node* true_exp;
-    Node * false_exp;
-    NodeTernaryOp(Node* cond,Node* true_exp,Node* false_exp);
-    std::string to_string();
-    llvm::Value* llvm_codegen(LLVMCompiler *compiler);
-};
+
 /**
     Node for integer literals
 */
@@ -70,22 +60,11 @@ struct NodeInt : public Node {
 /**
     Node for variable assignments
 */
-struct NodeAssn : public Node {
+struct NodeDecl : public Node {
     std::string identifier;
     Node *expression;
 
-    NodeAssn(std::string id, Node *expr);
-    std::string to_string();
-    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
-};
-/**
-    Node for variable assignments
-*/
-struct NodeVarAssign : public Node {
-    std::string var_name;
-    Node *expression;
-
-    NodeVarAssign(std::string name, Node *expr);
+    NodeDecl(std::string id, Node *expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
