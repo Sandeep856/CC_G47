@@ -1,5 +1,4 @@
 #include "ast.hh"
-
 #include <string>
 #include <vector>
 
@@ -22,6 +21,19 @@ std::string NodeBinOp::to_string() {
     out += ' ' + left->to_string() + ' ' + right->to_string() + ')';
 
     return out;
+}
+
+
+// ternary
+NodeTernaryOp::NodeTernaryOp(Node* cond, Node* true_exp, Node* false_exp) {
+    type = TERN;
+    condition = cond;
+    this->true_exp = true_exp;
+    this->false_exp = false_exp;
+}
+
+std::string NodeTernaryOp::to_string() {
+    return "(?: " + condition->to_string() + " " + true_exp->to_string() + " " + false_exp->to_string() + ")";
 }
 
 NodeInt::NodeInt(int val) {
@@ -53,15 +65,29 @@ std::string NodeStmts::to_string() {
     return out;
 }
 
-NodeDecl::NodeDecl(std::string id, Node *expr) {
+NodeAssn::NodeAssn(std::string id, Node *expr) {
     type = ASSN;
     identifier = id;
     expression = expr;
 }
 
-std::string NodeDecl::to_string() {
+std::string NodeAssn::to_string() {
     return "(let " + identifier + " " + expression->to_string() + ")";
 }
+
+
+//var ass
+NodeVarAssign::NodeVarAssign(std::string var_name, Node *expression) {
+    type = VARASS;
+    this->var_name = var_name;
+    this->expression = expression;
+}
+
+std::string NodeVarAssign::to_string() {
+    return "(assign " + var_name + " " + expression->to_string() + ")";
+}
+
+
 
 NodeDebug::NodeDebug(Node *expr) {
     type = DBG;
@@ -73,8 +99,14 @@ std::string NodeDebug::to_string() {
 }
 
 NodeIdent::NodeIdent(std::string ident) {
+    type = IDENT;
     identifier = ident;
 }
+
 std::string NodeIdent::to_string() {
     return identifier;
 }
+
+
+
+

@@ -80,7 +80,7 @@ void LLVMCompiler::write(std::string file_name) {
 
 //  ┌―――――――――――――――――――――┐  //
 //  │ AST -> LLVM Codegen │  //
-// └―――――――――――――――――――――┘   //
+//  └―――――――――――――――――――――┘   //
 
 // codegen for statements
 Value *NodeStmts::llvm_codegen(LLVMCompiler *compiler) {
@@ -122,7 +122,7 @@ Value *NodeBinOp::llvm_codegen(LLVMCompiler *compiler) {
 }
 
 
-Value *NodeDecl::llvm_codegen(LLVMCompiler *compiler) {
+Value *NodeAssn::llvm_codegen(LLVMCompiler *compiler) {
     Value *expr = expression->llvm_codegen(compiler);
 
     IRBuilder<> temp_builder(
@@ -142,6 +142,15 @@ Value *NodeIdent::llvm_codegen(LLVMCompiler *compiler) {
 
     // if your LLVM_MAJOR_VERSION >= 14
     return compiler->builder.CreateLoad(compiler->builder.getInt32Ty(), alloc, identifier);
+}
+
+Value *NodeTernaryOp::llvm_codegen(LLVMCompiler *compiler) {
+    //implement later
+    return nullptr;
+}
+Value *NodeVarAssign::llvm_codegen(LLVMCompiler *compiler) {
+    //implement later
+    return nullptr;
 }
 
 #undef MAIN_FUNC

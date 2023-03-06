@@ -16,6 +16,8 @@ extern int yyerror(std::string msg);
 ";"       { return TSCOL; }
 "("       { return TLPAREN; }
 ")"       { return TRPAREN; }
+"?"       { return TQUESTION; }  
+":"       { return TCOLON; }
 "="       { return TEQUAL; }
 "dbg"     { return TDBG; }
 "let"     { return TLET; }
