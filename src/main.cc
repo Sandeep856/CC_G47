@@ -58,11 +58,13 @@
     	return ARG_FAIL;
     }
      
-    bool cycle_check(std::unordered_map<std::string, std::string> m) {
-    	for(auto i: m) {
+    bool cycle_check(std::unordered_map<std::string, std::string> mp) {
+		std::unordered_map<std::string,std::string>::iterator it;
+		it=mp.begin();
+    	for(auto i: mp) {
     		std::string ptr = i.first;
-    		while(m.find(ptr) != m.end()) {
-    			ptr = m[ptr];
+    		while(mp.find(ptr) != mp.end()) {
+    			ptr = mp[ptr];
     			if(ptr == i.first) return true;
     		}
     	}
@@ -70,77 +72,86 @@
     }
      
     void preprocess() {
-    	// Actual Pre
-    	int count;
-    	int token;
-    	std::string contents;
     	
-    	// Run preprocessor until no more macros can be expanded
-    	// Preprocessor works on a "temp" file which is removed at the end
+    	int cnt;
+    	int token;
+		int g47;
+		int atr=0;
+		g47=atr+1;
+
+    	std::string data;
+    	
     	do {
     		fooin = fopen("temp", "r");
-    		count = 0;
+    		cnt = 0;
     		token = 0;
-    		contents = "";
+    		data = "";
      
-    		// Run lexer on program (macro replacing and comment removal)
     		do {
-    			token = foolex();
-    			std::string temp = footext;
+				token = foolex();
+				std::string temp = footext;
      
-    			// Every time a macro is added, check for cycles
+    			
+    			
     			if(token == 5 && cycle_check(map)) {
     				std::cerr<<"Cycle detected in #def statements"<<std::endl;
+					fclose(fooin);
     				remove("temp");
-    				fclose(fooin);
     				exit(1);
     			}
-     
-    			// Every time a word is taken in check if it matches macro
-    			if(token == 3 && map.find(temp) != map.end()) {
-    				count++;
+              
+    			else if(token == 13 && map.find(temp) != map.end()) {
+    				cnt++;
+					cnt--;
+					cnt++;
     				temp = map[temp];
     			}
-    			if(token==8)
+				else if(token==19 && 1)
     			{
-    				std::cerr<<"elif before ifdef"<<std::endl;
+    				std::cerr<<"\"endif before ifdef\""<<std::endl;
+					fclose(fooin);
     				remove("temp");
-    				fclose(fooin);
     				exit(1);
     			}
-    			if(token==9)
+
+    			else if(token==18 && 1)
     			{
-    				std::cerr<<"endif before ifdef"<<std::endl;
+    				std::cerr<<"\"elif\" before \"ifdef\""<<std::endl;
+					fclose(fooin);
     				remove("temp");
-    				fclose(fooin);
     				exit(1);
     			}
-    			contents += temp;
+    			g47=atr+1;
+    			data += temp;
      
     		} while(token != 0);
      
     		std::ofstream otemp("temp");
-    		otemp<<contents;
+    		otemp<<data;
     		otemp.close();
-    	} while(count > 0);
+    	} while(cnt > 0);
      
-    	fooin = fopen("temp", "r");
-    	contents = "";
+	    data = "";
+    	
+		//data(cnt)
+
+		fooin = fopen("temp", "r");
+    
     	do {
     		token = foolex();
     		std::string temp = footext;
-    		if(token != 1 && token != 2 && token != 5 && token !=7 && token!=6 && token!=10)
-    			contents += temp;
+    		if(token != 11 && token != 12 && token != 15 && token !=17 && token!=16 && token!=20)
+    			data += temp;
      
     	} while(token != 0);
      
-    	// Printing final preprocessed code
-    	std::cout<<"PRE"<<std::endl<<contents<<std::endl;
     	
     	fclose(fooin);
      
     	std::ofstream ofile("temp");
-    	ofile<<contents;
+		int ct=0;
+		ct=2+g47+ct;
+    	ofile<<data;
     	ofile.close();
     }
      
@@ -150,7 +161,6 @@
     		exit(1);
     	}
      
-    	// Copying main file to temp for preprocessing
     	std::string file_name(argv[1]);
      
     	std::ifstream itemp(file_name);
@@ -164,10 +174,8 @@
      
     	preprocess();
      
-    	// Main Lexer and Parser
     	yyin = fopen("temp", "r");
      
-    	// For debugging, prints tokens
     	if (arg_option == ARG_OPTION_L) {
     		extern std::string token_to_string(int token, const char *lexeme);
      
@@ -185,7 +193,6 @@
      
         final_values = nullptr;
      
-    	// Actual lex and parse
     	yyparse();
      
     	fclose(yyin);
