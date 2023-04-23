@@ -14,6 +14,12 @@ struct ParserValue {
 
     Node *node;
     NodeStmts *stmts;
+
+
+    NodeParam* paramnode;
+    NodeActualParam* actualparamnode;
+    NodeParams* ParamDecls;
+    NodeActualParams* ActualParams;
 };
 
 #endif
